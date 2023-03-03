@@ -13,12 +13,15 @@ from PyQt6.QtCore import Qt, QSize
 
 # Подкласс QMainWindow для настройки главного окна приложения
 class MainWindow(QMainWindow):
+    layout = QVBoxLayout()
+    barrels_table_text = ''
     num_list = []
     show_barells = []
     user_num_list = []
     user_scores = 0
     count = 0
-    barrels_table_text = ''
+    
+         
 
     def get_barell(self):
             self.count += 1
@@ -27,25 +30,23 @@ class MainWindow(QMainWindow):
             
             if len(barrels) == 0:
                 barrels.append(barell)
-                print('НЕ ВСЕ')
                 self.barrels_table_text = f'Бочонки: {barrels}'
-                print(barell,barrels,self.barrels_table_text)
+                self.barrels_table.setText(self.barrels_table_text)
                 
             elif len(barrels) >= 10:
                 print('ВСЕ')
-                print(barrels)
             else:
                 for i in barrels:
                     if barell == i:
                         barell = self.num_list[np.random.randint(0,100)]
                 else:
                         barrels.append(barell)
-                        print('НЕ ВСЕ')
                         self.barrels_table_text = f'Бочонки: {barrels}'
-                        print(barell,barrels,self.barrels_table_text)
+                        self.barrels_table.setText(self.barrels_table_text)
+                        
 
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super().__init__()
 
         #  генерируем числа (боченки)
         for i in range(0,101):
@@ -60,20 +61,19 @@ class MainWindow(QMainWindow):
         scores_label = QLabel(
             f"Ваши боченки - {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки - {self.user_scores}"
         )
-        barrels_table = QLabel(self.barrels_table_text)
+        self.barrels_table = QLabel(f"{self.barrels_table_text}")
         
         button_1 = QPushButton("ДОСТАТЬ БОЧОНОК", self)
         button_1.clicked.connect(self.get_barell)
 
         # Вставляем остальные 
-        layout = QVBoxLayout()
-        layout.addWidget(scores_label)
-        layout.addWidget(barrels_table)
-        layout.addWidget(button_1)
+        self.layout.addWidget(scores_label)
+        self.layout.addWidget(self.barrels_table)
+        self.layout.addWidget(button_1)
 
         # Устанавливаем виджеты от центра поумолчанию
         widget = QWidget()
-        widget.setLayout(layout)
+        widget.setLayout(self.layout)
         self.setFixedSize(QSize(400,300))
         self.setCentralWidget(widget)
 
