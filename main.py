@@ -24,25 +24,38 @@ class MainWindow(QMainWindow):
          
 
     def get_barell(self):
-            self.count += 1
-            barell = self.num_list[np.random.randint(0,100)]
-            barrels = self.show_barells
+        self.count += 1
+        barell = self.num_list[np.random.randint(0,100)]
+        barrels = self.show_barells
+        
+        if len(barrels) == 0:
+            barrels.append(barell)
+            self.barrels_table_text = f'Бочонки: {barrels}'
+            self.barrels_table.setText(self.barrels_table_text)
             
-            if len(barrels) == 0:
-                barrels.append(barell)
-                self.barrels_table_text = f'Бочонки: {barrels}'
-                self.barrels_table.setText(self.barrels_table_text)
-                
-            elif len(barrels) >= 10:
-                print('ВСЕ')
-            else:
-                for i in barrels:
-                    if barell == i:
-                        barell = self.num_list[np.random.randint(0,100)]
+            for k in self.user_num_list:
+                if k == barell:
+                    self.user_scores += 1
+                    self.scores_label.setText(str(self.user_scores))
+
+        elif len(barrels) >= 10:
+            print('ВСЕ')
+
+        else:
+            for i in barrels:
+                if barell == i:
+                    barell = self.num_list[np.random.randint(0,100)]
                 else:
-                        barrels.append(barell)
-                        self.barrels_table_text = f'Бочонки: {barrels}'
-                        self.barrels_table.setText(self.barrels_table_text)
+                    barrels.append(barell)
+                    self.barrels_table_text = f'Бочонки: {barrels}'
+                    self.barrels_table.setText(self.barrels_table_text)
+
+                    for k in self.user_num_list:
+                        if k == barell:
+                            self.user_scores += 1
+                            self.scores_label.setText(str(self.user_scores))
+
+                    break
                         
 
     def __init__(self):
@@ -58,7 +71,7 @@ class MainWindow(QMainWindow):
 
         # Наполняем окно виджетами
         self.setWindowTitle("RUSSIAN LOTO")
-        scores_label = QLabel(
+        self.scores_label = QLabel(
             f"Ваши боченки - {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки - {self.user_scores}"
         )
         self.barrels_table = QLabel(f"{self.barrels_table_text}")
@@ -67,7 +80,7 @@ class MainWindow(QMainWindow):
         button_1.clicked.connect(self.get_barell)
 
         # Вставляем остальные 
-        self.layout.addWidget(scores_label)
+        self.layout.addWidget(self.scores_label)
         self.layout.addWidget(self.barrels_table)
         self.layout.addWidget(button_1)
 
