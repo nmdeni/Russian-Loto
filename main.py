@@ -5,9 +5,10 @@ from PyQt6.QtWidgets import (
     QApplication, 
     QMainWindow, 
     QPushButton, 
-    QLabel, 
+    QLabel,
     QWidget, 
-    QVBoxLayout 
+    QVBoxLayout,
+    QHBoxLayout
 )
 from PyQt6.QtCore import Qt, QSize
 
@@ -34,10 +35,14 @@ class MainWindow(QMainWindow):
             for k in self.user_num_list:
                 if k == barell:
                     self.user_scores += 1
-                    self.scores_label.setText(str(self.user_scores))
+                    self.scores_label.setText(f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки - {str(self.user_scores)}")
 
         elif len(barrels) >= 52:
-            print('ВСЕ')
+            self.hbox = QHBoxLayout()
+            self.button_1.setText("СЫГРАТЬ ЕЩЕ")
+            self.hbox.addWidget(self.restart_yes)
+            self.hbox.addWidget(self.restart_no)
+            self.layout.addLayout(self.hbox)
 
         else:
             if len(barrels) == 11 or len(barrels) == 24 or len(barrels) == 38:
@@ -54,7 +59,6 @@ class MainWindow(QMainWindow):
     
                 for k in self.user_num_list:
                     if k == barell:
-                        print(0)
                         self.user_scores += 1
                         self.scores_label.setText(f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки - {str(self.user_scores)}")
 
@@ -79,19 +83,21 @@ class MainWindow(QMainWindow):
         )
         self.barrels_table = QLabel(f"{self.barrels_table_text}")
         
-        button_1 = QPushButton("ДОСТАТЬ БОЧОНОК", self)
-        button_1.clicked.connect(self.get_barell)
+        self.restart_yes = QPushButton("Да",self)
+        self.restart_no = QPushButton("Нет",self)
+        self.button_1 = QPushButton("ДОСТАТЬ БОЧОНОК", self)
+        self.button_1.clicked.connect(self.get_barell)
 
         # Вставляем остальные 
         self.layout.addWidget(self.scores_label)
         self.layout.addWidget(self.barrels_table)
-        self.layout.addWidget(button_1)
+        self.layout.addWidget(self.button_1)
 
         # Устанавливаем виджеты от центра поумолчанию
-        widget = QWidget()
-        widget.setLayout(self.layout)
+        self.widget = QWidget()
+        self.widget.setLayout(self.layout)
         self.setFixedSize(QSize(400,300))
-        self.setCentralWidget(widget)
+        self.setCentralWidget(self.widget)
 
     
 
