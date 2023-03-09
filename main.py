@@ -21,7 +21,19 @@ class MainWindow(QMainWindow):
     user_num_list = []
     user_scores = 0
     
-         
+    def close_app(self):
+        self.close()
+
+    def gen_app(self):
+        #  генерируем числа (боченки)
+        self.num_list = []
+        for i in range(0,101):
+            self.num_list.append(i)
+
+        #  генерируем числа у юзера
+        self.user_num_list = []
+        for i in range(5):
+            self.user_num_list.append(int(np.random.randint(0, 100)))
 
     def get_barell(self):
         barell = self.num_list[np.random.randint(0,100)]
@@ -37,12 +49,12 @@ class MainWindow(QMainWindow):
                     self.user_scores += 1
                     self.scores_label.setText(f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки - {str(self.user_scores)}")
 
-        elif len(barrels) >= 52:
+        elif len(barrels) >= 12:
             self.hbox = QHBoxLayout()
             self.button_1.setText("СЫГРАТЬ ЕЩЕ")
-            self.hbox.addWidget(self.restart_yes)
-            self.hbox.addWidget(self.restart_no)
-            self.layout.addLayout(self.hbox)
+            # self.hbox.addWidget(self.restart_yes)
+            # self.hbox.addWidget(self.restart_no)
+            # self.layout.addLayout(self.hbox)
 
         else:
             if len(barrels) == 11 or len(barrels) == 24 or len(barrels) == 38:
@@ -68,18 +80,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        #  генерируем числа (боченки)
-        for i in range(0,101):
-            self.num_list.append(i)
-
-        #  генерируем числа у юзера
-        for i in range(5):
-            self.user_num_list.append(int(np.random.randint(0, 100)))
+        # Инициализация игры
+        self.gen_app()
 
         # Наполняем окно виджетами
         self.setWindowTitle("RUSSIAN LOTO")
         self.scores_label = QLabel(
-            f"Ваши боченки - {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки: {self.user_scores}"
+            f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки: {self.user_scores}"
         )
         self.barrels_table = QLabel(f"{self.barrels_table_text}")
         
@@ -87,6 +94,8 @@ class MainWindow(QMainWindow):
         self.restart_no = QPushButton("Нет",self)
         self.button_1 = QPushButton("ДОСТАТЬ БОЧОНОК", self)
         self.button_1.clicked.connect(self.get_barell)
+        self.restart_no.clicked.connect(self.close_app)
+        self.restart_yes.clicked.connect(self.gen_app)
 
         # Вставляем остальные 
         self.layout.addWidget(self.scores_label)
