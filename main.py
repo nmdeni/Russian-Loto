@@ -14,26 +14,51 @@ from PyQt6.QtCore import Qt, QSize
 
 # Подкласс QMainWindow для настройки главного окна приложения
 class MainWindow(QMainWindow):
-    layout = QVBoxLayout()
-    barrels_table_text = ''
-    num_list = []
-    show_barells = []
-    user_num_list = []
-    user_scores = 0
-    
-    def close_app(self):
-        self.close()
+
+    def UI_gen(self):
+        self.gen_app()
+        self.layout = None
+        self.layout = QVBoxLayout()
+        self.setWindowTitle("RUSSIAN LOTO")
+        self.scores_label = QLabel(
+            f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки: {self.user_scores}/3"
+        )
+        self.barrels_table = QLabel(f"{self.barrels_table_text}")
+        
+        
+        self.button_1 = QPushButton("ДОСТАТЬ БОЧОНОК", self)
+        self.button_1.clicked.connect(self.get_barell)
+
+        # Вставляем остальные 
+        self.layout.addWidget(self.scores_label)
+        self.layout.addWidget(self.barrels_table)
+        self.layout.addWidget(self.button_1)
+
+        # Устанавливаем виджеты от центра поумолчанию
+        self.widget = QWidget()
+        self.widget.setLayout(self.layout)
+        self.setFixedSize(QSize(400,300))
+        self.setCentralWidget(self.widget)
 
     def gen_app(self):
+        self.barrels_table_text = ''
+        self.show_barells = []
+        self.barrels_table_text = ''
+        self.num_list = []
+        self.show_barells = []
+        self.user_num_list = []
+        self.user_scores = 0
+
         #  генерируем числа (боченки)
         self.num_list = []
-        for i in range(0,101):
-            self.num_list.append(i)
+        for k in range(0,101):
+            self.num_list.append(k)
 
         #  генерируем числа у юзера
         self.user_num_list = []
         for i in range(5):
             self.user_num_list.append(int(np.random.randint(0, 100)))
+
 
     def get_barell(self):
         barell = self.num_list[np.random.randint(0,100)]
@@ -47,14 +72,20 @@ class MainWindow(QMainWindow):
             for k in self.user_num_list:
                 if k == barell:
                     self.user_scores += 1
-                    self.scores_label.setText(f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки - {str(self.user_scores)}")
+                    self.scores_label.setText(f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки: {str(self.user_scores)}/3")
 
-        elif len(barrels) >= 12:
+        elif len(barrels) >= 52:
+            pass
             self.hbox = QHBoxLayout()
-            self.button_1.setText("СЫГРАТЬ ЕЩЕ")
-            # self.hbox.addWidget(self.restart_yes)
-            # self.hbox.addWidget(self.restart_no)
-            # self.layout.addLayout(self.hbox)
+            self.restart_yes = QPushButton("Да",self)
+            self.restart_no = QPushButton("Нет",self)
+            self.restart_no.clicked.connect(self.close)
+            self.restart_yes.clicked.connect(self.UI_gen)
+            self.button_1.setText("СЫГРАТЬ ЕЩЕ ?")
+            self.button_1.clicked.connect(self.UI_gen)
+            self.hbox.addWidget(self.restart_yes)
+            self.hbox.addWidget(self.restart_no)
+            self.layout.addLayout(self.hbox)
 
         else:
             if len(barrels) == 11 or len(barrels) == 24 or len(barrels) == 38:
@@ -72,9 +103,7 @@ class MainWindow(QMainWindow):
                 for k in self.user_num_list:
                     if k == barell:
                         self.user_scores += 1
-                        self.scores_label.setText(f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки - {str(self.user_scores)}")
-
-                    
+                        self.scores_label.setText(f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки: {str(self.user_scores)}/3")
                 break
 
     def __init__(self):
@@ -84,29 +113,7 @@ class MainWindow(QMainWindow):
         self.gen_app()
 
         # Наполняем окно виджетами
-        self.setWindowTitle("RUSSIAN LOTO")
-        self.scores_label = QLabel(
-            f"Ваши боченки: {' | '.join([str(item) for item in self.user_num_list])}\nВаши очки: {self.user_scores}"
-        )
-        self.barrels_table = QLabel(f"{self.barrels_table_text}")
-        
-        self.restart_yes = QPushButton("Да",self)
-        self.restart_no = QPushButton("Нет",self)
-        self.button_1 = QPushButton("ДОСТАТЬ БОЧОНОК", self)
-        self.button_1.clicked.connect(self.get_barell)
-        self.restart_no.clicked.connect(self.close_app)
-        self.restart_yes.clicked.connect(self.gen_app)
-
-        # Вставляем остальные 
-        self.layout.addWidget(self.scores_label)
-        self.layout.addWidget(self.barrels_table)
-        self.layout.addWidget(self.button_1)
-
-        # Устанавливаем виджеты от центра поумолчанию
-        self.widget = QWidget()
-        self.widget.setLayout(self.layout)
-        self.setFixedSize(QSize(400,300))
-        self.setCentralWidget(self.widget)
+        self.UI_gen()
 
     
 
